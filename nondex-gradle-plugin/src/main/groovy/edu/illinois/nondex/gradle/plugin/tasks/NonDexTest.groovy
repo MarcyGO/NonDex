@@ -18,11 +18,6 @@ class NonDexTest extends Test {
         }
 
         doFirst {
-            if (project.hasProperty("args")) {
-                println "Our input argument with project property [" + project.getProperty("args") + "]"
-            }
-            println "Our input argument with system property [" + System.getProperty("nondexSeed") + "]"
-        
             String commonPath = project.buildscript.configurations.classpath.find {it.name.startsWith("nondex-common")}.absolutePath
             String outPath = project.buildDir.absolutePath + File.separator + "out.jar"
 
