@@ -18,6 +18,11 @@ class NonDexTest extends Test {
         }
 
         doFirst {
+            if (project.hasProperty("args")) {
+                println "Our input argument with project property [" + project.getProperty("args") + "]"
+            }
+            println "Our input argument with system property [" + System.getProperty("nondexSeed") + "]"
+        
             String commonPath = project.buildscript.configurations.classpath.find {it.name.startsWith("nondex-common")}.absolutePath
             String outPath = project.buildDir.absolutePath + File.separator + "out.jar"
 
@@ -25,7 +30,20 @@ class NonDexTest extends Test {
 
             def args = "-Xbootclasspath/p:" + outPath + File.pathSeparator + commonPath
             jvmArgs args, "-D" + ConfigurationDefaults.PROPERTY_EXECUTION_ID + "=" + Utils.getFreshExecutionId()
+            readInputArgs()
             println "Running with arguments: " + getJvmArgs()
         }
+    }
+
+    void readInputArgs() {
+        putProperty(ConfigurationDefaults.PROPERTY_SEED, ConfigurationDefaults.DEFAULT_SEED_STR)
+        putProperty(ConfigurationDefaults.PROPERTY_MODE, ConfigurationDefaults.DEFAULT_MODE_STR)
+        putProperty(ConfigurationDefaults.PROPERTY_FILTER, ConfigurationDefaults.DEFAULT_FILTER)
+        putProperty(ConfigurationDefaults.PROPERTY_START, ConfigurationDefaults.DEFAULT_START_STR)
+        putProperty(ConfigurationDefaults.PROPERTY_END, ConfigurationDefaults.DEFAULT_END_STR)
+    }
+
+    void putProperty(String property_name, String default_val) {
+        jvmArgs "-D" + property + "=" + System.getProperty(property_name, default_val)
     }
 }
